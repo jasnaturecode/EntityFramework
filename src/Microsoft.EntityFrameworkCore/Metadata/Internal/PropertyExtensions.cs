@@ -43,7 +43,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             {
                 var currentProperty = traversalList[index];
 
-                if (currentProperty.RequiresValueGenerator)
+                if (currentProperty.ValueGenerated == ValueGenerated.OnAdd
+                    && currentProperty.RequiresValueGenerator)
                 {
                     return currentProperty;
                 }

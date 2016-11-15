@@ -31,6 +31,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Extensions
             var entityType = model.AddEntityType("Entity");
             var property = entityType.AddProperty("Property", typeof(int));
 
+            property.ValueGenerated = ValueGenerated.OnAdd;
             property.RequiresValueGenerator = true;
 
             Assert.Equal(property, property.GetGenerationProperty());
@@ -54,6 +55,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Extensions
             var thirdProperty = thirdType.AddProperty("ID", typeof(int));
             thirdType.AddForeignKey(thirdProperty, secondKey, secondType);
 
+            firstProperty.ValueGenerated = ValueGenerated.OnAdd;
             firstProperty.RequiresValueGenerator = true;
 
             Assert.Equal(firstProperty, thirdProperty.GetGenerationProperty());
@@ -85,6 +87,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Extensions
 
             endType.AddForeignKey(endProperty, middleKey1, middleType);
 
+            rightId2.ValueGenerated = ValueGenerated.OnAdd;
             rightId2.RequiresValueGenerator = true;
 
             Assert.Equal(rightId2, endProperty.GetGenerationProperty());
@@ -113,6 +116,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Extensions
             secondType.AddForeignKey(secondId1, firstKey, firstType);
             secondType.AddForeignKey(new[] { secondId1, secondId2 }, leafKey, leafType);
 
+            leafId1.ValueGenerated = ValueGenerated.OnAdd;
             leafId1.RequiresValueGenerator = true;
 
             Assert.Equal(leafId1, secondId1.GetGenerationProperty());

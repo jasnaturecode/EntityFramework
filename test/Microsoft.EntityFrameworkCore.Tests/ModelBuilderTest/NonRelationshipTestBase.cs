@@ -158,7 +158,6 @@ namespace Microsoft.EntityFrameworkCore.Tests
                 Assert.Equal(ValueGenerated.OnAdd, nameProperty.ValueGenerated);
 
                 var idProperty = (IProperty)entity.FindProperty(Customer.IdProperty);
-                Assert.False(idProperty.RequiresValueGenerator);
                 Assert.Equal(ValueGenerated.Never, idProperty.ValueGenerated);
             }
 

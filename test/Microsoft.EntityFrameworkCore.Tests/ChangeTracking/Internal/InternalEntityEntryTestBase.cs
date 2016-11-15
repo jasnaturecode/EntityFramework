@@ -375,6 +375,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.ChangeTracking.Internal
             var baseEntityType = model.FindEntityType(typeof(SomeSimpleEntityBase).FullName);
             var nonKeyProperty = baseEntityType.AddProperty("NonId", typeof(int));
             nonKeyProperty.RequiresValueGenerator = true;
+            nonKeyProperty.ValueGenerated = ValueGenerated.OnAdd;
             var configuration = TestHelpers.Instance.CreateContextServices(model);
 
             var entry = CreateInternalEntry(configuration, entityType, new SomeEntity());
@@ -1300,6 +1301,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.ChangeTracking.Internal
 
             var someSimpleEntityType = model.AddEntityType(typeof(SomeSimpleEntityBase));
             var simpleKeyProperty = someSimpleEntityType.AddProperty("Id", typeof(int));
+            simpleKeyProperty.ValueGenerated = ValueGenerated.OnAdd;
             simpleKeyProperty.RequiresValueGenerator = true;
             someSimpleEntityType.GetOrSetPrimaryKey(simpleKeyProperty);
 
@@ -1319,6 +1321,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.ChangeTracking.Internal
             var fk = entityType2.AddProperty("SomeEntityId", typeof(int));
             entityType2.GetOrAddForeignKey(new[] { fk }, entityType1.FindPrimaryKey(), entityType1);
             var justAProperty = entityType2.AddProperty("JustAProperty", typeof(int));
+            justAProperty.ValueGenerated = ValueGenerated.OnAdd;
             justAProperty.RequiresValueGenerator = true;
 
             var entityType3 = model.AddEntityType(typeof(FullNotificationEntity));

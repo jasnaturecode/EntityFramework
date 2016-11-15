@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Design;
 using Microsoft.EntityFrameworkCore.Relational.Design.Specification.Tests.TestUtilities;
-using Microsoft.EntityFrameworkCore.Specification.Tests;
+using Microsoft.EntityFrameworkCore.Specification.Tests.TestUtilities;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using Xunit;
 
@@ -238,11 +238,15 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
         b.Property<int>(""Id"")
             .ValueGeneratedOnAdd();
 
-        b.Property<string>(""Discriminator"");
+        b.Property<string>(""Discriminator"")
+            .IsRequired()
+            .ValueGeneratedOnAdd();
 
         b.HasKey(""Id"");
 
         b.ToTable(""BaseEntity"");
+
+        b.HasDiscriminator<string>(""Discriminator"").HasValue(""BaseEntity"");
     });
 
 builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelSnapshotTest+AnotherDerivedEntity"", b =>
@@ -252,6 +256,8 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
         b.Property<string>(""Title"");
 
         b.ToTable(""AnotherDerivedEntity"");
+
+        b.HasDiscriminator().HasValue(""AnotherDerivedEntity"");
     });
 
 builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelSnapshotTest+DerivedEntity"", b =>
@@ -261,6 +267,8 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
         b.Property<string>(""Name"");
 
         b.ToTable(""DerivedEntity"");
+
+        b.HasDiscriminator().HasValue(""DerivedEntity"");
     });
 ",
                 o =>
@@ -296,7 +304,8 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
             .ValueGeneratedOnAdd();
 
         b.Property<string>(""Discriminator"")
-            .IsRequired();
+            .IsRequired()
+            .ValueGeneratedOnAdd();
 
         b.HasKey(""Id"");
 
@@ -902,7 +911,7 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
             Test(
                 builder =>
                     {
-                        builder.Entity<EntityWithTwoProperties>().Property<int>("AlternateId").Metadata.RequiresValueGenerator = true;
+                        builder.Entity<EntityWithTwoProperties>().Property<int>("AlternateId").Metadata.RequiresValueGenerator = false;
                         builder.Ignore<EntityWithOneProperty>();
                     },
                 @"
@@ -918,7 +927,7 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
         b.ToTable(""EntityWithTwoProperties"");
     });
 ",
-                o => { Assert.Equal(false, o.GetEntityTypes().First().FindProperty("AlternateId").RequiresValueGenerator); });
+                o => { Assert.True(o.GetEntityTypes().First().FindProperty("AlternateId").RequiresValueGenerator); });
         }
 
         [Fact]
@@ -1792,6 +1801,10 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
         b.Property<int>(""Id"")
             .ValueGeneratedOnAdd();
 
+        b.Property<string>(""Discriminator"")
+            .IsRequired()
+            .ValueGeneratedOnAdd();
+
         b.Property<int?>(""NavigationId"");
 
         b.HasKey(""Id"");
@@ -1799,6 +1812,8 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
         b.HasIndex(""NavigationId"");
 
         b.ToTable(""BaseType"");
+
+        b.HasDiscriminator<string>(""Discriminator"").HasValue(""BaseType"");
     });
 
 builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelSnapshotTest+EntityWithOneProperty"", b =>
@@ -1817,6 +1832,8 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
 
 
         b.ToTable(""DerivedType"");
+
+        b.HasDiscriminator().HasValue(""DerivedType"");
     });
 
 builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelSnapshotTest+BaseType"", b =>
@@ -1833,7 +1850,7 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
 
         private void Test(Action<ModelBuilder> buildModel, string expectedCode, Action<IModel> assert)
         {
-            var modelBuilder = TestHelpers.Instance.CreateConventionBuilder();
+            var modelBuilder = RelationalTestHelpers.Instance.CreateConventionBuilder();
             buildModel(modelBuilder);
             var model = modelBuilder.Model;
 

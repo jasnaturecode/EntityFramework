@@ -55,10 +55,10 @@ namespace Microsoft.EntityFrameworkCore.Specification.Tests
                             {
                                 b.Property(e => e.SpecialId)
                                     .HasAnnotation("SpecialGuid", true)
-                                    .Metadata.RequiresValueGenerator = true;
+                                    .Metadata.ValueGenerated = ValueGenerated.OnAdd;
 
                                 b.Property(e => e.SpecialString)
-                                    .Metadata.RequiresValueGenerator = true;
+                                    .Metadata.ValueGenerated = ValueGenerated.OnAdd;
                             });
         }
 
