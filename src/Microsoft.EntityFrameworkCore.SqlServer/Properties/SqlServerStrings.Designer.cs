@@ -80,6 +80,14 @@ namespace Microsoft.EntityFrameworkCore.Internal
             return string.Format(CultureInfo.CurrentCulture, GetString("DefaultDecimalTypeColumn", "property", "entityType"), property, entityType);
         }
 
+        /// <summary>
+        /// The property '{property}' on entity type '{entityType}' is configured to use 'SequenceHiLo' value generator, which is only intended for keys. If this was intentional configure an alternate key on the property, otherwise call `ValueGeneratedNever`.
+        /// </summary>
+        public static string NonKeySequenceValueGeneration([CanBeNull] object property, [CanBeNull] object entityType)
+        {
+            return string.Format(CultureInfo.CurrentCulture, GetString("NonKeySequenceValueGeneration", "property", "entityType"), property, entityType);
+        }
+
         private static string GetString(string name, params string[] formatterNames)
         {
             var value = _resourceManager.GetString(name);

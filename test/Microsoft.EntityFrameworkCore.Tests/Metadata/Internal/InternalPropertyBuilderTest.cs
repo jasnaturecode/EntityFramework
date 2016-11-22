@@ -64,39 +64,6 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Internal
         }
 
         [Fact]
-        public void Can_only_override_lower_or_equal_source_UseValueGenerator()
-        {
-            var builder = CreateInternalPropertyBuilder();
-            var metadata = builder.Metadata;
-
-            Assert.True(builder.RequiresValueGenerator(true, ConfigurationSource.DataAnnotation));
-            Assert.True(builder.RequiresValueGenerator(false, ConfigurationSource.DataAnnotation));
-
-            Assert.Equal(false, metadata.RequiresValueGenerator);
-
-            Assert.False(builder.RequiresValueGenerator(true, ConfigurationSource.Convention));
-            Assert.Equal(false, metadata.RequiresValueGenerator);
-        }
-
-        [Fact]
-        public void Can_only_override_existing_RequiresValueGenerator_value_explicitly()
-        {
-            var metadata = CreateProperty();
-            Assert.Null(metadata.GetRequiresValueGeneratorConfigurationSource());
-            metadata.RequiresValueGenerator = true;
-            var builder = metadata.Builder;
-
-            Assert.Equal(ConfigurationSource.Explicit, metadata.GetRequiresValueGeneratorConfigurationSource());
-            Assert.True(builder.RequiresValueGenerator(true, ConfigurationSource.DataAnnotation));
-            Assert.False(builder.RequiresValueGenerator(false, ConfigurationSource.DataAnnotation));
-
-            Assert.Equal(true, metadata.RequiresValueGenerator);
-
-            Assert.True(builder.RequiresValueGenerator(false, ConfigurationSource.Explicit));
-            Assert.Equal(false, metadata.RequiresValueGenerator);
-        }
-
-        [Fact]
         public void Can_only_override_lower_or_equal_source_ValueGenerated()
         {
             var builder = CreateInternalPropertyBuilder();
@@ -170,11 +137,11 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Internal
             Assert.True(builder.HasValueGenerator((p, e) => new CustomValueGenerator2(), ConfigurationSource.DataAnnotation));
 
             Assert.IsType<CustomValueGenerator2>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.True(metadata.RequiresValueGenerator());
 
             Assert.False(builder.HasValueGenerator((p, e) => new CustomValueGenerator1(), ConfigurationSource.Convention));
             Assert.IsType<CustomValueGenerator2>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.True(metadata.RequiresValueGenerator());
         }
 
         [Fact]
@@ -190,11 +157,11 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Internal
             Assert.False(builder.HasValueGenerator((p, e) => new CustomValueGenerator2(), ConfigurationSource.DataAnnotation));
 
             Assert.IsType<CustomValueGenerator1>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.True(metadata.RequiresValueGenerator());
 
             Assert.True(builder.HasValueGenerator((p, e) => new CustomValueGenerator2(), ConfigurationSource.Explicit));
             Assert.IsType<CustomValueGenerator2>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.True(metadata.RequiresValueGenerator());
         }
 
         [Fact]
@@ -206,15 +173,20 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Internal
             Assert.True(builder.HasValueGenerator((p, e) => new CustomValueGenerator1(), ConfigurationSource.DataAnnotation));
 
             Assert.IsType<CustomValueGenerator1>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.Equal(ValueGenerated.OnAdd, metadata.ValueGenerated);
+            Assert.True(metadata.RequiresValueGenerator());
 
             Assert.False(builder.HasValueGenerator((Func<IProperty, IEntityType, ValueGenerator>)null, ConfigurationSource.Convention));
+
             Assert.IsType<CustomValueGenerator1>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.Equal(ValueGenerated.OnAdd, metadata.ValueGenerated);
+            Assert.True(metadata.RequiresValueGenerator());
 
             Assert.True(builder.HasValueGenerator((Func<IProperty, IEntityType, ValueGenerator>)null, ConfigurationSource.Explicit));
+
             Assert.Null(metadata.GetValueGeneratorFactory());
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.Equal(ValueGenerated.Never, metadata.ValueGenerated);
+            Assert.False(metadata.RequiresValueGenerator());
         }
 
         [Fact]
@@ -227,11 +199,11 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Internal
             Assert.True(builder.HasValueGenerator(typeof(CustomValueGenerator2), ConfigurationSource.DataAnnotation));
 
             Assert.IsType<CustomValueGenerator2>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.True(metadata.RequiresValueGenerator());
 
             Assert.False(builder.HasValueGenerator(typeof(CustomValueGenerator1), ConfigurationSource.Convention));
             Assert.IsType<CustomValueGenerator2>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.True(metadata.RequiresValueGenerator());
         }
 
         [Fact]
@@ -243,15 +215,20 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Internal
             Assert.True(builder.HasValueGenerator(typeof(CustomValueGenerator1), ConfigurationSource.DataAnnotation));
 
             Assert.IsType<CustomValueGenerator1>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.Equal(ValueGenerated.OnAdd, metadata.ValueGenerated);
+            Assert.True(metadata.RequiresValueGenerator());
 
             Assert.False(builder.HasValueGenerator((Type)null, ConfigurationSource.Convention));
+
             Assert.IsType<CustomValueGenerator1>(metadata.GetValueGeneratorFactory()(null, null));
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.Equal(ValueGenerated.OnAdd, metadata.ValueGenerated);
+            Assert.True(metadata.RequiresValueGenerator());
 
             Assert.True(builder.HasValueGenerator((Type)null, ConfigurationSource.Explicit));
+
             Assert.Null(metadata.GetValueGeneratorFactory());
-            Assert.True(metadata.RequiresValueGenerator);
+            Assert.Equal(ValueGenerated.Never, metadata.ValueGenerated);
+            Assert.False(metadata.RequiresValueGenerator());
         }
 
         private class CustomValueGenerator1 : ValueGenerator<string>

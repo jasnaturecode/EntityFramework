@@ -33,7 +33,6 @@ namespace Microsoft.EntityFrameworkCore.Tests.ChangeTracking.Internal
             var someSimpleEntityType = model.AddEntityType(typeof(SomeSimpleEntityBase).FullName);
             var simpleKeyProperty = someSimpleEntityType.AddProperty("Id", typeof(int));
             simpleKeyProperty.ValueGenerated = ValueGenerated.OnAdd;
-            simpleKeyProperty.RequiresValueGenerator = true;
             someSimpleEntityType.GetOrSetPrimaryKey(simpleKeyProperty);
 
             var someCompositeEntityType = model.AddEntityType(typeof(SomeCompositeEntityBase).FullName);
@@ -51,9 +50,11 @@ namespace Microsoft.EntityFrameworkCore.Tests.ChangeTracking.Internal
             entityType2.HasBaseType(someCompositeEntityType);
             var fk = entityType2.AddProperty("SomeEntityId", typeof(int));
             entityType2.GetOrAddForeignKey(new[] { fk }, entityType1.FindPrimaryKey(), entityType1);
-            var justAProperty = entityType2.AddProperty("JustAProperty", typeof(int));
+            // TODO: declare this on the derived type
+            // #2611
+            var justAProperty = someCompositeEntityType.AddProperty("JustAProperty", typeof(int));
             justAProperty.ValueGenerated = ValueGenerated.OnAdd;
-            justAProperty.RequiresValueGenerator = true;
+            someCompositeEntityType.AddKey(justAProperty);
 
             var entityType3 = model.AddEntityType(typeof(FullNotificationEntity));
             entityType3.GetOrSetPrimaryKey(entityType3.AddProperty("Id", typeof(int)));

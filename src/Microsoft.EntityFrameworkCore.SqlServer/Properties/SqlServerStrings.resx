@@ -141,4 +141,7 @@
   <data name="DefaultDecimalTypeColumn" xml:space="preserve">
     <value>No type was specified for the decimal column '{property}' on entity type '{entityType}'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accomadate all the values using 'ForSqlServerHasColumnType()'.</value>
   </data>
+  <data name="NonKeySequenceValueGeneration" xml:space="preserve">
+    <value>The property '{property}' on entity type '{entityType}' is configured to use 'SequenceHiLo' value generator, which is only intended for keys. If this was intentional configure an alternate key on the property, otherwise call `ValueGeneratedNever`.</value>
+  </data>
 </root>

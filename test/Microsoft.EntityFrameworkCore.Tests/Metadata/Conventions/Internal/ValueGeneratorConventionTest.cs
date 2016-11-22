@@ -51,8 +51,8 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
-            Assert.True(keyProperties[1].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
+            Assert.True(keyProperties[1].RequiresValueGenerator());
 
             Assert.Equal(ValueGenerated.OnAdd, keyProperties[0].ValueGenerated);
             Assert.Equal(ValueGenerated.Never, keyProperties[1].ValueGenerated);
@@ -81,7 +81,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
             Assert.Equal(ValueGenerated.Never, keyProperties[0].ValueGenerated);
         }
 
@@ -107,8 +107,8 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
-            Assert.True(keyProperties[1].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
+            Assert.True(keyProperties[1].RequiresValueGenerator());
             Assert.Equal(ValueGenerated.Never, keyProperties[0].ValueGenerated);
             Assert.Equal(ValueGenerated.Never, keyProperties[1].ValueGenerated);
         }
@@ -137,12 +137,12 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
             Assert.Equal(ValueGenerated.Never, keyProperties[0].ValueGenerated);
         }
 
         [Fact]
-        public void KeyConvention_does_not_override_RequiresValueGenerator_when_configured_explicitly()
+        public void KeyConvention_does_not_override_ValueGenerated_when_configured_explicitly()
         {
             var modelBuilder = CreateInternalModelBuilder();
             var entityBuilder = modelBuilder.Entity(typeof(SampleEntity), ConfigurationSource.Convention);
@@ -152,16 +152,13 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
             entityBuilder.Property(properties[0], ConfigurationSource.Convention)
                 .ValueGenerated(ValueGenerated.OnAdd, ConfigurationSource.Explicit);
 
-            entityBuilder.Property("Id", typeof(int), ConfigurationSource.Convention)
-                .RequiresValueGenerator(false, ConfigurationSource.Explicit);
-
             var keyBuilder = entityBuilder.PrimaryKey(properties, ConfigurationSource.Convention);
 
             Assert.True(new ValueGeneratorConvention().Apply(keyBuilder, null));
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
-            Assert.False(keyProperties[0].RequiresValueGenerator);
+            Assert.Equal(ValueGenerated.OnAdd, keyProperties[0].ValueGenerated);
         }
 
         [Fact]
@@ -182,7 +179,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
 
             var foreignKeyBuilder = referencedEntityBuilder.HasForeignKey(
                 principalEntityBuilder,
@@ -191,7 +188,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             Assert.Same(foreignKeyBuilder, new ValueGeneratorConvention().Apply(foreignKeyBuilder));
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
             Assert.Equal(ValueGenerated.Never, keyProperties[0].ValueGenerated);
         }
 
@@ -213,7 +210,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             var keyProperties = keyBuilder.Metadata.Properties;
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
 
             var relationshipBuilder = referencedEntityBuilder.HasForeignKey(
                 principalEntityBuilder,
@@ -222,14 +219,14 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
 
             Assert.Same(relationshipBuilder, new ValueGeneratorConvention().Apply(relationshipBuilder));
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
             Assert.Equal(ValueGenerated.Never, keyProperties[0].ValueGenerated);
 
             referencedEntityBuilder.RemoveForeignKey(relationshipBuilder.Metadata, ConfigurationSource.Convention);
 
             new ValueGeneratorConvention().Apply(referencedEntityBuilder, relationshipBuilder.Metadata);
 
-            Assert.True(keyProperties[0].RequiresValueGenerator);
+            Assert.True(keyProperties[0].RequiresValueGenerator());
             Assert.Equal(ValueGenerated.OnAdd, keyProperties[0].ValueGenerated);
         }
 
@@ -294,7 +291,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
             var property = keyBuilder.Metadata.Properties.First();
 
             Assert.Equal(ValueGenerated.OnAdd, property.ValueGenerated);
-            Assert.True(property.RequiresValueGenerator);
+            Assert.True(property.RequiresValueGenerator());
         }
 
         [Fact]
@@ -309,7 +306,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
             var property = keyBuilder.Metadata.Properties.First();
 
             Assert.Equal(ValueGenerated.OnAdd, property.ValueGenerated);
-            Assert.True(property.RequiresValueGenerator);
+            Assert.True(property.RequiresValueGenerator());
         }
 
         [Fact]
@@ -324,7 +321,7 @@ namespace Microsoft.EntityFrameworkCore.Tests.Metadata.Conventions.Internal
             var property = keyBuilder.Metadata.Properties.First();
 
             Assert.Equal(ValueGenerated.Never, property.ValueGenerated);
-            Assert.True(property.RequiresValueGenerator);
+            Assert.True(property.RequiresValueGenerator());
         }
 
         [Fact]

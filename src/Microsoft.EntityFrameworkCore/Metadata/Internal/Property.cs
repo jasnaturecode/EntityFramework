@@ -27,7 +27,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         private ConfigurationSource? _isNullableConfigurationSource;
         private ConfigurationSource? _isConcurrencyTokenConfigurationSource;
         private ConfigurationSource? _isStoreGeneratedAlwaysConfigurationSource;
-        private ConfigurationSource? _requiresValueGeneratorConfigurationSource;
         private ConfigurationSource? _valueGeneratedConfigurationSource;
 
         // Warning: Never access these fields directly as access needs to be thread-safe
@@ -312,53 +311,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
 
         private void UpdateIsReadOnlyAfterSaveConfigurationSource(ConfigurationSource configurationSource)
             => _isReadOnlyAfterSaveConfigurationSource = configurationSource.Max(_isReadOnlyAfterSaveConfigurationSource);
-
-        /// <summary>
-        ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public virtual bool RequiresValueGenerator
-        {
-            get
-            {
-                bool value;
-                return TryGetFlag(PropertyFlags.RequiresValueGenerator, out value) ? value : DefaultRequiresValueGenerator;
-            }
-            set { SetRequiresValueGenerator(value, ConfigurationSource.Explicit); }
-        }
-
-        /// <summary>
-        ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public virtual void SetRequiresValueGenerator(bool? requiresValueGenerator, ConfigurationSource configurationSource)
-        {
-            if (requiresValueGenerator != null)
-            {
-                SetFlag(requiresValueGenerator.Value, PropertyFlags.RequiresValueGenerator);
-                UpdateRequiresValueGeneratorConfigurationSource(configurationSource);
-            }
-            else
-            {
-                ResetFlag(PropertyFlags.RequiresValueGenerator);
-                SetRequiresValueGeneratorConfigurationSource(null);
-            }
-        }
-
-        private bool DefaultRequiresValueGenerator
-            => true;
-
-        /// <summary>
-        ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public virtual ConfigurationSource? GetRequiresValueGeneratorConfigurationSource() => _requiresValueGeneratorConfigurationSource;
-
-        private void SetRequiresValueGeneratorConfigurationSource(ConfigurationSource? configurationSource)
-            => _requiresValueGeneratorConfigurationSource = configurationSource;
-
-        private void UpdateRequiresValueGeneratorConfigurationSource(ConfigurationSource configurationSource)
-            => _requiresValueGeneratorConfigurationSource = configurationSource.Max(_requiresValueGeneratorConfigurationSource);
 
         /// <summary>
         ///     This API supports the Entity Framework Core infrastructure and is not intended to be used

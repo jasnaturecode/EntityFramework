@@ -19,7 +19,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal
             if (name == SqlServerFullAnnotationNames.Instance.ValueGenerationStrategy)
             {
                 propertyBuilder.ValueGenerated(GetValueGenerated(propertyBuilder.Metadata), ConfigurationSource.Convention);
-                propertyBuilder.RequiresValueGenerator(GetRequiresValueGenerator(propertyBuilder.Metadata), ConfigurationSource.Convention);
                 return annotation;
             }
 

@@ -1296,9 +1296,9 @@ namespace Microsoft.EntityFrameworkCore.Tests
                 Assert.True(principalType.GetKeys().Contains(nonPrimaryPrincipalKey));
                 var oldKeyProperty = (IProperty)principalType.FindProperty(nameof(BigMak.Id));
                 var newKeyProperty = (IProperty)principalType.FindProperty(nameof(BigMak.AlternateKey));
-                Assert.True(oldKeyProperty.RequiresValueGenerator);
+                Assert.True(oldKeyProperty.RequiresValueGenerator());
                 Assert.Equal(ValueGenerated.Never, oldKeyProperty.ValueGenerated);
-                Assert.True(newKeyProperty.RequiresValueGenerator);
+                Assert.True(newKeyProperty.RequiresValueGenerator());
                 Assert.Equal(ValueGenerated.OnAdd, newKeyProperty.ValueGenerated);
                 Assert.Same(dependentKey, dependentType.GetKeys().SingleOrDefault());
                 Assert.Same(dependentKey, dependentType.FindPrimaryKey());

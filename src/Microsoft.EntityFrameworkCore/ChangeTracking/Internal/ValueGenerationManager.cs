@@ -98,7 +98,7 @@ namespace Microsoft.EntityFrameworkCore.ChangeTracking.Internal
             foreach (var property in entry.EntityType.GetProperties())
             {
                 var isForeignKey = property.IsForeignKey();
-                if (((property.ValueGenerated != ValueGenerated.Never && property.RequiresValueGenerator)
+                if (((property.ValueGenerated != ValueGenerated.Never && property.RequiresValueGenerator())
                      || isForeignKey)
                     && property.ClrType.IsDefaultValue(entry[property]))
                 {
@@ -118,7 +118,7 @@ namespace Microsoft.EntityFrameworkCore.ChangeTracking.Internal
         /// </summary>
         public virtual bool MayGetTemporaryValue(IProperty property, IEntityType entityType)
             => property.ValueGenerated != ValueGenerated.Never
-               && property.RequiresValueGenerator
+               && property.RequiresValueGenerator()
                && !property.IsForeignKey()
                && _valueGeneratorSelector.Select(property, entityType).GeneratesTemporaryValues;
 

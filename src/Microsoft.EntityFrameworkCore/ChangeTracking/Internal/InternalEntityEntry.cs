@@ -938,7 +938,7 @@ namespace Microsoft.EntityFrameworkCore.ChangeTracking.Internal
                && ((EntityState == EntityState.Added
                     && (property.IsStoreGeneratedAlways
                         || HasTemporaryValue(property)
-                        || (!property.RequiresValueGenerator && HasDefaultValue(property))))
+                        || (!property.RequiresValueGenerator() && HasDefaultValue(property))))
                    || (property.ValueGenerated == ValueGenerated.OnAddOrUpdate && EntityState == EntityState.Modified && (property.IsStoreGeneratedAlways || !IsModified(property))));
 
         private bool HasDefaultValue(IProperty property)

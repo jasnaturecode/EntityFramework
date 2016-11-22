@@ -906,31 +906,6 @@ builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelS
         }
 
         [Fact]
-        public void Property_RequiresValueGenerator_is_not_stored_in_snapshot()
-        {
-            Test(
-                builder =>
-                    {
-                        builder.Entity<EntityWithTwoProperties>().Property<int>("AlternateId").Metadata.RequiresValueGenerator = false;
-                        builder.Ignore<EntityWithOneProperty>();
-                    },
-                @"
-builder.Entity(""Microsoft.EntityFrameworkCore.FunctionalTests.Migrations.ModelSnapshotTest+EntityWithTwoProperties"", b =>
-    {
-        b.Property<int>(""Id"")
-            .ValueGeneratedOnAdd();
-
-        b.Property<int>(""AlternateId"");
-
-        b.HasKey(""Id"");
-
-        b.ToTable(""EntityWithTwoProperties"");
-    });
-",
-                o => { Assert.True(o.GetEntityTypes().First().FindProperty("AlternateId").RequiresValueGenerator); });
-        }
-
-        [Fact]
         public void Property_concurrencyToken_is_stored_in_snapshot()
         {
             Test(

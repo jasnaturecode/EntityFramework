@@ -233,22 +233,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
         ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public virtual bool RequiresValueGenerator(bool? generateValue, ConfigurationSource configurationSource)
-        {
-            if (configurationSource.Overrides(Metadata.GetRequiresValueGeneratorConfigurationSource())
-                || Metadata.RequiresValueGenerator == generateValue)
-            {
-                Metadata.SetRequiresValueGenerator(generateValue, configurationSource);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public virtual bool ValueGenerated(ValueGenerated? valueGenerated, ConfigurationSource configurationSource)
         {
             if (configurationSource.Overrides(Metadata.GetValueGeneratedConfigurationSource())
@@ -338,12 +322,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal
             {
                 newPropertyBuilder.IsConcurrencyToken(Metadata.IsConcurrencyToken,
                     oldIsConcurrencyTokenConfigurationSource.Value);
-            }
-            var oldRequiresValueGeneratorConfigurationSource = Metadata.GetRequiresValueGeneratorConfigurationSource();
-            if (oldRequiresValueGeneratorConfigurationSource.HasValue)
-            {
-                newPropertyBuilder.RequiresValueGenerator(Metadata.RequiresValueGenerator,
-                    oldRequiresValueGeneratorConfigurationSource.Value);
             }
             var oldValueGeneratedConfigurationSource = Metadata.GetValueGeneratedConfigurationSource();
             if (oldValueGeneratedConfigurationSource.HasValue)

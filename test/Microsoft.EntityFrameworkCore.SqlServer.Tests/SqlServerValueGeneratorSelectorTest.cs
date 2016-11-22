@@ -129,7 +129,6 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Tests
 
             foreach (var property in entityType.GetProperties())
             {
-                property.RequiresValueGenerator = generateValues;
                 property.ValueGenerated = ValueGenerated.OnAdd;
             }
 

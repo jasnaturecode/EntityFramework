@@ -89,6 +89,38 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.FunctionalTests
             {
                 modelBuilder.ForSqlServerUseSequenceHiLo();
 
+                modelBuilder.Entity<Blog>(eb =>
+                    {
+                        eb.HasAlternateKey(b => new { b.OtherId });
+                        eb.Property(b => b.OtherId).ValueGeneratedOnAdd();
+                    });
+            }
+        }
+
+        [Fact]
+        public void Insert_with_sequence_HiLo_for_nonkey_throws()
+        {
+            using (var testStore = SqlServerTestStore.Create(DatabaseName))
+            {
+                using (var context = new BlogContextHiLoNonKey(testStore.Name))
+                {
+                    Assert.Equal(SqlServerStrings.NonKeySequenceValueGeneration(nameof(Blog.OtherId), nameof(Blog)),
+                        Assert.Throws<InvalidOperationException>(() => context.Database.EnsureCreated()).Message);
+                }
+            }
+        }
+
+        public class BlogContextHiLoNonKey : ContextBase
+        {
+            public BlogContextHiLoNonKey(string databaseName)
+                : base(databaseName)
+            {
+            }
+
+            protected override void OnModelCreating(ModelBuilder modelBuilder)
+            {
+                modelBuilder.ForSqlServerUseSequenceHiLo();
+
                 modelBuilder.Entity<Blog>().Property(b => b.OtherId).ValueGeneratedOnAdd();
             }
         }
@@ -602,14 +634,41 @@ END");
             }
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
-            {
-                modelBuilder
-                    .Entity<GuidBlog>(eb =>
+                => modelBuilder.Entity<GuidBlog>(eb =>
                     {
-                        eb.Property(e => e.NotId)
-                            .ValueGeneratedOnAdd();
+                        eb.HasAlternateKey(e => e.NotId);
+                        eb.Property(e => e.NotId).ValueGeneratedOnAdd();
                     });
+        }
+
+        [Fact]
+        public void Insert_with_client_generated_GUID_nonkey_throws()
+        {
+            using (var testStore = SqlServerTestStore.Create(DatabaseName))
+            {
+                using (var context = new BlogContextClientGuidNonKey(testStore.Name))
+                {
+                    context.Database.EnsureCreated();
+
+                    var blog = context.Add(new GuidBlog { Name = "One Unicorn" }).Entity;
+
+                    Assert.Equal(default(Guid), blog.NotId);
+
+                    // No value set on a required column
+                    Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+                }
             }
+        }
+
+        public class BlogContextClientGuidNonKey : ContextBase
+        {
+            public BlogContextClientGuidNonKey(string databaseName)
+                : base(databaseName)
+            {
+            }
+
+            protected override void OnModelCreating(ModelBuilder modelBuilder)
+                => modelBuilder.Entity<GuidBlog>().Property(e => e.NotId).ValueGeneratedOnAdd();
         }
 
         [Fact]

@@ -30,7 +30,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal
                         || name == providerAnnotations.ComputedColumnSql)))
             {
                 propertyBuilder.ValueGenerated(GetValueGenerated(property), ConfigurationSource.Convention);
-                propertyBuilder.RequiresValueGenerator(GetRequiresValueGenerator(propertyBuilder.Metadata), ConfigurationSource.Convention);
                 return annotation;
             }
 
@@ -52,22 +51,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal
                   || relationalProperty.DefaultValueSql != null
                     ? ValueGenerated.OnAdd
                     : (ValueGenerated?)null;
-        }
-
-        protected override bool? GetRequiresValueGenerator(Property property)
-        {
-            var requiresValueGenerator = base.GetRequiresValueGenerator(property);
-            if (requiresValueGenerator != null)
-            {
-                return requiresValueGenerator;
-            }
-
-            var relationalProperty = AnnotationProvider.For(property);
-            return relationalProperty.ComputedColumnSql != null
-                   || relationalProperty.DefaultValue != null
-                   || relationalProperty.DefaultValueSql != null
-                ? false
-                : (bool?)null;
         }
     }
 }

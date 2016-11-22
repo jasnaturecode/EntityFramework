@@ -55,13 +55,11 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal
             {
                 var property = previousPrimaryKey.Properties.First();
                 property.Builder?.ValueGenerated(GetValueGenerated(property), ConfigurationSource.Convention);
-                property.Builder?.RequiresValueGenerator(GetRequiresValueGenerator(property), ConfigurationSource.Convention);
             }
 
             foreach (var property in keyBuilder.Metadata.Properties)
             {
                 property.Builder.ValueGenerated(GetValueGenerated(property), ConfigurationSource.Convention);
-                property.Builder.RequiresValueGenerator(GetRequiresValueGenerator(property), ConfigurationSource.Convention);
             }
 
             return true;
@@ -76,7 +74,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal
             if (name == CoreAnnotationNames.ValueGeneratorFactoryAnnotation)
             {
                 propertyBuilder.ValueGenerated(GetValueGenerated(propertyBuilder.Metadata), ConfigurationSource.Convention);
-                propertyBuilder.RequiresValueGenerator(GetRequiresValueGenerator(propertyBuilder.Metadata), ConfigurationSource.Convention);
             }
 
             return annotation;
@@ -93,13 +90,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal
                    || property.GetValueGeneratorFactory() != null
                     ? ValueGenerated.OnAdd
                     : (ValueGenerated?)null);
-
-        /// <summary>
-        ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        protected virtual bool? GetRequiresValueGenerator([NotNull] Property property)
-            => property.IsKey() || property.GetValueGeneratorFactory() != null ? true : (bool?)null;
 
         /// <summary>
         ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
